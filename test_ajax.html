@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emotion API Test</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+</head>
+<body>
+    <p>Returns JSON output using MCS Emotion API</p>
+    <input type="file" id="filename" name="filename">
+    <button id="btn">Click here</button>
+    <p id="response"></p>
+
+<script type="text/javascript">
+    $('#btn').click(function () {
+    var file = document.getElementById('filename').files[0];
+    console.log(file)
+
+    callAPI(file);
+    });
+
+    function callAPI (file) {
+        var params = {
+            // Request parameters
+        };
+
+        $.ajax({
+            url: "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize?" + $.param(params),
+            beforeSend: function(xhrObj){
+                xhrObj.setRequestHeader("Content-Type","application/octet-stream");
+                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key","991aa06967c04a8dbd519baee38b07be");
+            },
+            type: "POST",
+            data: file,
+            processData: false
+        })
+        .done(function(response) {
+            ProcessResult(response);
+        })
+        .fail(function(error) {
+            $("#response").text(error.getAllResponseHeaders());
+        });
+    };
+    function ProcessResult(response) {
+        var data = JSON.stringify(response);
+        $("#response").text(data);
+    }
+</script>
+</body>
+</html>
